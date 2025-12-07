@@ -2,21 +2,28 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-#
+
+# ==============================
+# Setup
+# ==============================
+
 os.makedirs('output', exist_ok=True)
 
 # Reading the input csv
 input_csv='contract_events.csv'
 df_raw = pd.read_csv(input_csv)
-df_raw['block_timestamp']=pd.to_datetime(df_raw['block_timestamp'])
-
-# Keep only events that are final and part of the canonical chain
-df = df_raw[df_raw.status == 'Confirmed']
 
 # Quick normalization
-df['block_timestamp']=pd.to_datetime(df['block_timestamp'])
-# df['event_id'] = df['event_id'].astype(str)
-# df['previous_event_id'] = df['previous_event_id'].astype(str).replace({'nan': None})
+df_raw['block_timestamp']=pd.to_datetime(df_raw['block_timestamp'])
+df_raw['event_id'] = df_raw['event_id'].astype(str)
+df_raw['previous_event_id'] = df_raw['previous_event_id'].astype(str).replace({'nan': None})
+
+# Keep only events that are final and part of the canonical chain
+df = df_raw[df_raw.status == 'Confirmed'].copy()
+
+# ==============================
+# Task 1: Orphan Event Detection
+# ==============================
 
 def task1_solution(df): 
     # Task 1 solution log
@@ -30,6 +37,10 @@ def task1_solution(df):
     orphan_result = orphan[cols]
     print('Orphan Events: ',len(orphan_result))
     orphan_result.to_csv('output/task1_result.csv', index=False)
+
+# ==============================
+# Task 2: Time Delta Per Contract
+# ==============================
 
 def task2_solution(df):
     # Task 2 solution log
@@ -55,6 +66,10 @@ def task2_solution(df):
     print(average_result)
     average_result.to_csv('output/task2_contracts_average_time_delta.csv', index=False)
 
+# ==============================
+# Task 3: Sender Activity Mapping
+# ==============================
+
 def task3_solution(df):
     # Task 3 solution log
     print('\nTask 3 Answer: Sender Mapping') 
@@ -69,6 +84,11 @@ def task3_solution(df):
     activity = activity.sort_values(['contract_address', 'rank_in_sender_activity'],ascending=[True, True])
     print(activity)
     activity.to_csv('output/task3_sender_mapping_in_contracts.csv', index=False)
+
+
+# ==============================
+# Bonus 1: Data Quality Checks
+# ==============================
 
 def bonus1(df, df_raw):
     # Bonus 1 solution log
@@ -91,6 +111,9 @@ def bonus1(df, df_raw):
     print('Events With Unconfirmed Previous Events: ',len(orphan_unconfirmed_result))
     orphan_unconfirmed_result.to_csv('output/bonus1_previous_event_unconfirmed.csv', index=False)
 
+# ==============================
+# Bonus 2: Suspicious / Bot-like Behavior
+# ==============================
 
 def bonus2(df_raw):
     # Bonus 2 solution log
@@ -99,6 +122,10 @@ def bonus2(df_raw):
     df_raw['seconds_since_last_block'] = df_raw['block_timestamp'].diff().dt.total_seconds()
     df_result = df_raw.groupby('seconds_since_last_block').size().reset_index(name='count')
     print('Time Difference Between Blocks: \n',df_result)
+
+# ==============================
+# Bonus 3: Visualization
+# ==============================
 
 def plot_simple_chart(x,y,xlabel,ylabel,title,file_name):
     plt.figure()
@@ -149,9 +176,18 @@ def bonus3(df, df_raw):
     plot_bar_chart(pivot,'Contract Address','Event Count','Event Count by Contract and Sender','Sender','lower center','4.contract_sender_counts.png')
 
 
-task1_solution(df)
-task2_solution(df)
-task3_solution(df)
-bonus1(df, df_raw)
-bonus2(df_raw)
-bonus3(df, df_raw)
+
+# ==============================
+# Main Execution
+# ==============================
+
+def main():
+    task1_solution(df)
+    task2_solution(df)
+    task3_solution(df)
+    bonus1(df, df_raw)
+    bonus2(df_raw)
+    bonus3(df, df_raw)
+
+if __name__ == "__main__":
+    main()
