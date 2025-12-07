@@ -101,3 +101,47 @@ There are five contracts and six senders in the dataset. We can see the ranking 
 |...	| ...	| ...	| ...	|
 
 ---
+## 🧪 Bonus 1 – Data Quality & Inconsistencies
+### 1.Reused tx_hash
+In standard blockchain systems, a `tx_hash` is expected to uniquely identify a transaction. However, in this dataset, the same `tx_hash` appears across multiple blocks, at different timestamps, and even under different block statuses. This behavior breaks the uniqueness assumption and reduces the reliability of `tx_hash` as an identifier, indicating a clear data quality issue in the dataset.
+
+A detailed view of the duplicated `tx_hash` usage in confirmed events is available [here](./output/bonus1_tx_hash_reuse.csv).
+
+### 2. References to Unconfirmed Events
+Similar to the orphan event detection task, the focus here was to identify confirmed events whose `previous_event_id` references an event that exists only in `Pending` or `Reorged` status. 
+
+A total of 1,690 events were found to reference unconfirmed previous events. You can view the complete list of these cases [here](./output/bonus1_previous_event_unconfirmed.csv).
+
+## 🤖 Bonus 2 – Bot-like Behavior Analysis
+In this step, we investigated suspicious temporal patterns that could indicate automated behavior. As a simple example, we analyzed the time difference between consecutive blocks. The results showed that, with the exception of 9 blocks, all other 19,993 blocks — independent of their status — had an exact 15-second time gap from both the preceding and following blocks.
+
+|seconds_since_last_block|count|
+|----------|----------|
+|0|6|
+|15 |19993|
+|30 |3|
+
+This pattern may indicate automatically generated blocks or synthetic block data, as the time intervals between blocks appear to be artificially consistent.
+
+## 📊 Bonus 3 – Visualizations
+In this section, we visualized several interesting patterns observed in the dataset.
+
+1. Event Types Confirmed Event Frequency:
+<figure>
+  <img src="./output/1.event_type_counts.png" alt="My Image Title" width="500">
+</figure>
+
+2. Contracts Confirmed Events Frequency:
+<figure>
+  <img src="./output/2.contracts_event_counts.png" alt="My Image Title" width="500">
+</figure>
+
+3. Contracts Events Frequency By Status:
+<figure>
+  <img src="./output/3.contract_status_counts.png" alt="My Image Title" width="500">
+</figure>
+
+4. Contracts Confirmed Events Frequency By Senders:
+<figure>
+  <img src="./output/4.contract_sender_counts.png" alt="My Image Title" width="500">
+</figure>
