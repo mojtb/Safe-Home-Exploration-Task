@@ -1,0 +1,6 @@
+contract_address,event_count,avg_seconds_between_events,median_seconds_between_events
+0xAlpha,1356,221.3579335793358,165.0
+0xBeta,1345,223.15848214285714,150.0
+0xDelta,1328,225.55388093443858,150.0
+0xGamma,1276,234.75294117647059,165.0
+0xOmega,1328,225.85908063300678,165.0
